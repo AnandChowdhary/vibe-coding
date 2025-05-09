@@ -42,6 +42,8 @@ jobs:
             -b \
             -v \
             --table=public.users \
+            --table=public.organizations \
+            --table=public.memberships \
             -f ./backup/supabase_backup_$(date +%Y%m%d_%H%M%S).dump
 
       - name: Verify dump file
