@@ -41,6 +41,7 @@ jobs:
             -F c \
             -b \
             -v \
+            --exclude-table-data=public.events \
             -f ./backup/supabase_backup_$(date +%Y%m%d_%H%M%S).dump
 
       - name: Verify dump file
