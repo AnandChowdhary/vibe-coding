@@ -1,13 +1,13 @@
 # 🌈 Vibe coding scripts
 
-This repository contains a collection of utility scripts for various one-time tasks. Each script is designed to be self-contained and well-documented.
+Welcome to my collection of vibe-coded utility scripts! These are one-off solutions created through the power of AI-assisted development, where I describe what I want to build and let the AI help me bring it to life. Each script is designed to be self-contained, well-documented, and easy to understand - embracing the "code first, refine later" philosophy of vibe coding.
 
-## Table of contents
+Whether you're scraping LinkedIn profiles or migrating databases, these scripts demonstrate how AI can help us build practical solutions quickly. Feel free to use them, modify them, or just take inspiration from them. Remember, while AI helps generate the code, the creativity and problem-solving remain uniquely human.
 
-- [LinkedIn search results scraper](#linkedin-search-results-scraper)
-- [Database migration](#database-migration)
+<details>
+<summary><h2>🔍 LinkedIn search results scraper</h2></summary>
 
-## LinkedIn search results scraper ([`linkedin-sales-navigator-scraper.js`](./linkedin-sales-navigator-scraper.js))
+([`linkedin-sales-navigator-scraper.js`](./linkedin-sales-navigator-scraper.js))
 
 This script automates the process of scrolling through LinkedIn search result pages (specifically for "People" searches), extracting profile data, and saving it.
 
@@ -64,7 +64,12 @@ The script includes several constants at the top that you can modify:
 - **Browser tab:** Keep the browser tab with the LinkedIn search results active and visible while the script is running.
 - **localStorage:** Data is stored in your browser's `localStorage`. Clearing your browser data will remove saved progress.
 
-## Database migration ([`.github/workflows/database-migration.yml`](./.github/workflows/database-migration.yml))
+</details>
+
+<details>
+<summary><h2>🔄 Database migration</h2></summary>
+
+([`.github/workflows/database-migration.yml`](./.github/workflows/database-migration.yml))
 
 This GitHub Actions workflow automates the process of migrating a PostgreSQL database from Supabase to Azure Database for PostgreSQL.
 
@@ -104,3 +109,9 @@ This GitHub Actions workflow automates the process of migrating a PostgreSQL dat
 - **Backup files:** Each run creates a timestamped backup file in the format `supabase_backup_YYYYMMDD_HHMMSS.dump`
 - **Error handling:** The workflow includes verification steps and will fail if any critical operation fails
 - **Cleanup:** Temporary files are automatically cleaned up after the workflow completes or fails
+
+</details>
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
