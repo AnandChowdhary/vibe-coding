@@ -41,7 +41,7 @@ jobs:
             -F c \
             -b \
             -v \
-            --exclude-table-data=public.events \
+            --table=public.users \
             -f ./backup/supabase_backup_$(date +%Y%m%d_%H%M%S).dump
 
       - name: Verify dump file
@@ -59,6 +59,7 @@ jobs:
             -h $AZURE_DB_HOST \
             -U $AZURE_DB_USER \
             -d $AZURE_DB_NAME \
+            --no-owner \
             -v \
             ./backup/supabase_backup_*.dump || exit 1
 
