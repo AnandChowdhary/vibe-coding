@@ -55,6 +55,14 @@ jobs:
       - name: Restore to Azure (if not dry run)
         if: ${{ github.event.inputs.dry_run == 'false' }}
         run: |
+          # Drop all tables in public schema
+          PGPASSWORD=$AZURE_DB_PASSWORD psql \
+            -h $AZURE_DB_HOST \
+            -U $AZURE_DB_USER \
+            -d $AZURE_DB_NAME \
+            -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;" || exit 1
+
+          # Restore the table
           PGPASSWORD=$AZURE_DB_PASSWORD pg_restore \
             -h $AZURE_DB_HOST \
             -U $AZURE_DB_USER \
