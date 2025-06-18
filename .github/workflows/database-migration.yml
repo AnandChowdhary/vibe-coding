@@ -34,23 +34,41 @@ jobs:
 
       - name: Dump Supabase database
         run: |
+          # Dump the full schema (includes all types, enums, sequences, etc.)
           PGPASSWORD=$SUPABASE_DB_PASSWORD pg_dump \
             -h $SUPABASE_DB_HOST \
             -U $SUPABASE_DB_USER \
             -d $SUPABASE_DB_NAME \
             -F c \
-            -b \
+            --schema-only \
             -v \
-            --table=public.organizations --table=public.users --table=public.memberships \
-            -f ./backup/supabase_backup_$(date +%Y%m%d_%H%M%S).dump
+            -f ./backup/supabase_schema_$(date +%Y%m%d_%H%M%S).dump
 
-      - name: Verify dump file
+          # Dump only the data for the selected tables
+          PGPASSWORD=$SUPABASE_DB_PASSWORD pg_dump \
+            -h $SUPABASE_DB_HOST \
+            -U $SUPABASE_DB_USER \
+            -d $SUPABASE_DB_NAME \
+            -F c \
+            --data-only \
+            --table=public.organizations \
+            --table=public.users \
+            --table=public.memberships \
+            -v \
+            -f ./backup/supabase_data_$(date +%Y%m%d_%H%M%S).dump
+
+      - name: Verify dump files
         run: |
-          if [ ! -s ./backup/supabase_backup_*.dump ]; then
-            echo "Error: Dump file is empty or does not exist"
+          if [ ! -s ./backup/supabase_schema_*.dump ]; then
+            echo "Error: Schema dump file is empty or does not exist"
             exit 1
           fi
-          echo "Dump file size: $(du -h ./backup/supabase_backup_*.dump | cut -f1)"
+          if [ ! -s ./backup/supabase_data_*.dump ]; then
+            echo "Error: Data dump file is empty or does not exist"
+            exit 1
+          fi
+          echo "Schema dump file size: $(du -h ./backup/supabase_schema_*.dump | cut -f1)"
+          echo "Data dump file size: $(du -h ./backup/supabase_data_*.dump | cut -f1)"
 
       - name: Restore to Azure (if not dry run)
         if: ${{ github.event.inputs.dry_run == 'false' }}
@@ -62,7 +80,7 @@ jobs:
             -d $AZURE_DB_NAME \
             -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;" || exit 1
 
-          # Restore the table
+          # Restore schema first (includes types, sequences, etc.)
           PGPASSWORD=$AZURE_DB_PASSWORD pg_restore \
             -h $AZURE_DB_HOST \
             -U $AZURE_DB_USER \
@@ -72,7 +90,17 @@ jobs:
             --no-owner \
             --disable-triggers \
             -v \
-            ./backup/supabase_backup_*.dump || exit 1
+            ./backup/supabase_schema_*.dump || exit 1
+
+          # Restore data
+          PGPASSWORD=$AZURE_DB_PASSWORD pg_restore \
+            -h $AZURE_DB_HOST \
+            -U $AZURE_DB_USER \
+            -d $AZURE_DB_NAME \
+            --no-owner \
+            --disable-triggers \
+            -v \
+            ./backup/supabase_data_*.dump || exit 1
 
       - name: Verify Azure database (if not dry run)
         if: ${{ github.event.inputs.dry_run == 'false' }}
