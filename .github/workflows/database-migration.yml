@@ -67,7 +67,10 @@ jobs:
             -h $AZURE_DB_HOST \
             -U $AZURE_DB_USER \
             -d $AZURE_DB_NAME \
+            --clean \
+            --if-exists \
             --no-owner \
+            --disable-triggers \
             -v \
             ./backup/supabase_backup_*.dump || exit 1
 
