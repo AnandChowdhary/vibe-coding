@@ -34,13 +34,14 @@ jobs:
 
       - name: Dump Supabase database
         run: |
-          # Dump the full schema (includes all types, enums, sequences, etc.)
+          # Dump only the public schema (excludes Supabase-specific schemas and roles)
           PGPASSWORD=$SUPABASE_DB_PASSWORD pg_dump \
             -h $SUPABASE_DB_HOST \
             -U $SUPABASE_DB_USER \
             -d $SUPABASE_DB_NAME \
             -F c \
             --schema-only \
+            --schema=public \
             -v \
             -f ./backup/supabase_schema_$(date +%Y%m%d_%H%M%S).dump
 
